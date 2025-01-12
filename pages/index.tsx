@@ -1,5 +1,5 @@
-import Canvas from "@/modules/canvas/components/Canvas";
+import Room from "@/modules/room/components/Room";
 
 export default function Home() {
-  return <Canvas />;
+  return <Room />;
 }
