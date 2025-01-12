@@ -11,6 +11,7 @@ interface ServerToClientEvents {
     options: CtxOptions,
     userId: string
   ) => void;
+  user_undo(userId: string): void;
   mouse_moved: (x: number, y: number, socketId: string) => void;
   users_in_room: (SocketIds: string[]) => void;
   user_disconnected: (SocketId: string) => void;
