@@ -14,7 +14,7 @@ const Home = () => {
   const { openModal } = useModal();
 
   useEffect(() => {
-    socket.on("created", (roomIdFromServer) => {
+    socket.on("created", (roomIdFromServer: string) => {
       setAtomRoomId(roomIdFromServer);
       router.push(roomIdFromServer);
     });
