@@ -5,6 +5,7 @@ export default function Document() {
     <Html lang="en">
       <Head />
       <body className="antialiased">
+        <div id="portal"></div>
         <Main />
         <NextScript />
       </body>
