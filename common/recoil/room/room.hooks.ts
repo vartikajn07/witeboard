@@ -1,5 +1,8 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { roomAtom } from "./room.atom";
+
+import { getNextColor } from "@/common/lib/getNextColor";
+
+import { DEFAULT_ROOM, roomAtom } from "./room.atom";
 
 export const useRoom = () => {
   const room = useRecoilValue(roomAtom);
@@ -13,18 +16,13 @@ export const useSetRoom = () => {
   return setRoom;
 };
 
-export const useRoomId = () => {
-  const { id } = useRecoilValue(roomAtom);
-
-  return id;
-};
-
 export const useSetRoomId = () => {
   const setRoomId = useSetRecoilState(roomAtom);
 
   const handleSetRoomId = (id: string) => {
-    setRoomId((prev) => ({ ...prev, id }));
+    setRoomId({ ...DEFAULT_ROOM, id });
   };
+
   return handleSetRoomId;
 };
 
@@ -32,9 +30,9 @@ export const useSetUsers = () => {
   const setRoom = useSetRecoilState(roomAtom);
 
   const handleAddUser = (userId: string, name: string) => {
-    setRoom((prev) => {
+    setRoom((prev: any) => {
       const newUsers = prev.users;
-      const newUsersMoves = prev.users;
+      const newUsersMoves = prev.usersMoves;
 
       const color = getNextColor([...newUsers.values()].pop()?.color);
 
@@ -49,9 +47,9 @@ export const useSetUsers = () => {
   };
 
   const handleRemoveUser = (userId: string) => {
-    setRoom((prev) => {
+    setRoom((prev: any) => {
       const newUsers = prev.users;
-      const newUsersMoves = prev.users;
+      const newUsersMoves = prev.usersMoves;
 
       const userMoves = newUsersMoves.get(userId);
 
@@ -67,9 +65,9 @@ export const useSetUsers = () => {
   };
 
   const handleAddMoveToUser = (userId: string, moves: Move) => {
-    setRoom((prev) => {
-      const newUsersMoves = prev.users;
-      const oldMoves = prev.users.get(userId);
+    setRoom((prev: any) => {
+      const newUsersMoves = prev.usersMoves;
+      const oldMoves = prev.usersMoves.get(userId);
 
       newUsersMoves.set(userId, [...(oldMoves || []), moves]);
       return { ...prev, usersMoves: newUsersMoves };
@@ -77,9 +75,9 @@ export const useSetUsers = () => {
   };
 
   const handleRemoveMoveFromUser = (userId: string) => {
-    setRoom((prev) => {
-      const newUsersMoves = prev.users;
-      const oldMoves = prev.users.get(userId);
+    setRoom((prev: any) => {
+      const newUsersMoves = prev.usersMoves;
+      const oldMoves = prev.usersMoves.get(userId);
       oldMoves?.pop();
 
       newUsersMoves.set(userId, oldMoves || []);
@@ -99,7 +97,7 @@ export const useMyMoves = () => {
   const [room, setRoom] = useRecoilState(roomAtom);
 
   const handleAddMyMove = (move: Move) => {
-    setRoom((prev) => {
+    setRoom((prev: any) => {
       if (prev.myMoves[prev.myMoves.length - 1]?.options.mode === "select")
         return {
           ...prev,
@@ -114,7 +112,7 @@ export const useMyMoves = () => {
     const newMoves = [...room.myMoves];
     const move = newMoves.pop();
 
-    setRoom((prev) => ({ ...prev, myMoves: newMoves }));
+    setRoom((prev: any) => ({ ...prev, myMoves: newMoves }));
 
     return move;
   };

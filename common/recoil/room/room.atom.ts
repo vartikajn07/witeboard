@@ -1,4 +1,3 @@
-import { ClientRoom } from "@/common/types/global";
 import { atom } from "recoil";
 
 export const DEFAULT_ROOM = {
