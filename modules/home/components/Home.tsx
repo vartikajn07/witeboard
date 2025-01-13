@@ -7,6 +7,7 @@ import { useModal } from "@/common/recoil/modal";
 
 const Home = () => {
   const [roomId, setRoomId] = useState("");
+  const [username, setUsername] = useState("");
   const setAtomRoomId = useSetRoomId();
   const router = useRouter();
 
@@ -36,11 +37,11 @@ const Home = () => {
   }, [openModal, roomId, router, setAtomRoomId]);
 
   const handleCreateRoom = () => {
-    socket.emit("create_room");
+    socket.emit("create_room", username);
   };
   const handleJoinRoom = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit("join_room", roomId);
+    socket.emit("join_room", roomId, username);
   };
 
   return (
@@ -48,8 +49,19 @@ const Home = () => {
       <h1 className="mt-24 text-extra font-extrabold leading-tight">
         WiteBoard
       </h1>
+      <div className="mt-10 flex flex-col gap-2">
+        <label className="self-start font-bold leading-tight">
+          Enter your name
+        </label>
+        <input
+          className="rounded-xl border p-5 py-1"
+          id="room-id"
+          placeholder="Username.."
+          onChange={(e) => setUsername(e.target.value)}
+        ></input>
+      </div>
       <form
-        className="mt-8 flex flex-col items-center gap-2"
+        className=" flex flex-col items-center gap-2"
         onSubmit={handleJoinRoom}
       >
         <label
@@ -70,6 +82,11 @@ const Home = () => {
           Join
         </button>
       </form>
+      <div className="my-8 flex w-96 items-center gap-2">
+        <div className="h-px w-full bg-zinc-100" />
+        <h2 className="text-zinc-100">or</h2>
+        <div className="h-px w-full bg-zinc-100" />
+      </div>
       <div className="mt-10 flex flex-col items-center gap-2">
         <h5 className="self-start font-bold leading-tight">Create new room</h5>
         <button
