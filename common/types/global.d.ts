@@ -2,12 +2,14 @@ export declare global {
   interface CtxOptions {
     lineWidth: number;
     lineColor: string;
+    erase: boolean;
   }
 }
 
 interface Move {
   path: [number, number][];
   options: CtxOptions;
+  eraser: boolean;
 }
 
 type Room = {
@@ -30,6 +32,7 @@ interface ClientRoom {
 }
 
 interface ServerToClientEvents {
+  your_move: (move: Move) => void;
   room_exists: (exists: boolean) => void;
   room: (room: Room, usersMovesToParse: string, usersToParse: string) => void;
   created: (roomId: string) => void;
