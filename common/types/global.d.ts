@@ -12,6 +12,14 @@ interface Move {
 
 type Room = { users: Map<string, Move[]>; drawed: Move[] };
 
+interface ClientRoom {
+  id: string;
+  // usersMoves: Map<string, Move[]>;
+  movesWithoutUser: Move[];
+  myMoves: Move[];
+  users: Map<string, User>;
+}
+
 interface ServerToClientEvents {
   room: (room: Room, usersToParse: string) => void;
   created: (roomId: string) => void;
