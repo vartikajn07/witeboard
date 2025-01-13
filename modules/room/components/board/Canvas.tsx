@@ -1,105 +1,81 @@
+import { useEffect, useState } from "react";
+
+import { motion } from "framer-motion";
+import { BsArrowsMove } from "react-icons/bs";
+
 import { CANVAS_SIZE } from "@/common/constants/canvasSize";
 import { useViewportSize } from "@/common/hooks/useViewportSize";
-import { useMotionValue, motion } from "framer-motion";
-import { canvas } from "framer-motion/dist/client";
-import { useEffect, useRef, useState } from "react";
-import { useKeyPressEvent } from "react-use";
 import { socket } from "@/common/lib/socket";
-import MiniMap from "../Minimap";
+
 import { useBoardPosition } from "../../hooks/useBoardPosition";
-import { useRoom } from "@/common/recoil/room";
-import { drawAllMoves } from "../../helpers/Canvas.helpers";
+import { useCtx } from "../../hooks/useCtx";
 import { useDraw } from "../../hooks/useDraw";
+import { useMovesHandlers } from "../../hooks/useMovesHandlers";
+import { useRefs } from "../../hooks/useRefs";
 import { useSocketDraw } from "../../hooks/useSocketDraw";
+import Background from "./Background";
+import MiniMap from "./Minimap";
 
 const Canvas = () => {
-  const room = useRoom();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const smallcanvasRef = useRef<HTMLCanvasElement>(null);
-
-  const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-  const [dragging, setDragging] = useState(false);
-  const [, setMovedMiniMap] = useState(false);
-
+  const { canvasRef, bgRef, undoRef, redoRef } = useRefs();
   const { width, height } = useViewportSize();
-
-  useKeyPressEvent("Control", (e) => {
-    if (e.ctrlKey && !dragging) {
-      setDragging(true);
-    }
-  });
-
-  // const x = useMotionValue(0);
-  // const y = useMotionValue(0);
-
   const { x, y } = useBoardPosition();
+  const ctx = useCtx();
 
-  const copyCanvasToSmall = () => {
-    if (canvasRef.current && smallcanvasRef.current) {
-      const smallCtx = smallcanvasRef.current.getContext("2d");
-
-      if (smallCtx) {
-        smallCtx.clearRect(0, 0, CANVAS_SIZE.width, CANVAS_SIZE.height);
-        smallCtx.drawImage(
-          canvasRef.current,
-          0,
-          0,
-          CANVAS_SIZE.width,
-          CANVAS_SIZE.height
-        );
-      }
-    }
-  };
+  const [dragging, setDragging] = useState(true);
 
   const {
-    handleDraw,
     handleEndDrawing,
+    handleDraw,
     handleStartDrawing,
     drawing,
-    handleUndo,
-  } = useDraw(ctx, dragging);
+    clearOnYourMove,
+  } = useDraw(dragging);
+  useSocketDraw(drawing);
 
-  useSocketDraw(ctx, drawing);
+  const { handleUndo, handleRedo } = useMovesHandlers(clearOnYourMove);
 
-  //setup
   useEffect(() => {
-    const newCtx = canvasRef.current?.getContext("2d");
-    if (newCtx) setCtx(newCtx);
+    setDragging(false);
+  }, []);
 
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (!e.ctrlKey && dragging) {
-        setDragging(false);
-      }
+  // SETUP
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      setDragging(e.ctrlKey);
     };
 
-    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("keyup", handleKey);
+    window.addEventListener("keydown", handleKey);
+
+    const undoBtn = undoRef.current;
+    const redoBtn = redoRef.current;
+
+    undoBtn?.addEventListener("click", handleUndo);
+    redoBtn?.addEventListener("click", handleRedo);
 
     return () => {
-      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("keyup", handleKey);
+      window.removeEventListener("keydown", handleKey);
+      undoBtn?.removeEventListener("click", handleUndo);
+      redoBtn?.removeEventListener("click", handleRedo);
     };
-  }, [dragging]);
+  }, [canvasRef, dragging, handleRedo, handleUndo, redoRef, undoRef]);
 
   useEffect(() => {
     if (ctx) socket.emit("joined_room");
   }, [ctx]);
 
-  useEffect(() => {
-    if (ctx) {
-      drawAllMoves(ctx, room), copyCanvasToSmall();
-    }
-  }, [ctx, room]);
-
   return (
-    <div className=" relative h-full w-full overflow-hidden">
-      <button className="absolute top-0 " onClick={handleUndo}>
-        Undo
-      </button>
+    <div className="relative h-full w-full overflow-hidden">
       <motion.canvas
+        // SETTINGS
         ref={canvasRef}
         width={CANVAS_SIZE.width}
         height={CANVAS_SIZE.height}
-        className={`bg-zinc-100 ${dragging && "cursor-move"}`}
+        className={`absolute top-0 z-10 ${dragging && "cursor-move"}`}
         style={{ x, y }}
+        // DRAG
         drag={dragging}
         dragConstraints={{
           left: -(CANVAS_SIZE.width - width),
@@ -109,27 +85,34 @@ const Canvas = () => {
         }}
         dragElastic={0}
         dragTransition={{ power: 0, timeConstant: 0 }}
+        // HANDLERS
         onMouseDown={(e) => handleStartDrawing(e.clientX, e.clientY)}
         onMouseUp={handleEndDrawing}
         onMouseMove={(e) => {
-          handleDraw(e.clientX, e.clientY);
+          handleDraw(e.clientX, e.clientY, e.shiftKey);
         }}
-        onTouchStart={(e) => {
+        onTouchStart={(e) =>
           handleStartDrawing(
             e.changedTouches[0].clientX,
             e.changedTouches[0].clientY
-          );
-        }}
+          )
+        }
         onTouchEnd={handleEndDrawing}
-        onTouchMove={(e) => {
-          handleDraw(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-        }}
+        onTouchMove={(e) =>
+          handleDraw(e.changedTouches[0].clientX, e.changedTouches[0].clientY)
+        }
       />
-      <MiniMap
-        ref={smallcanvasRef}
-        dragging={dragging}
-        setMovedMiniMap={setMovedMiniMap}
-      />
+      <Background bgRef={bgRef as React.RefObject<HTMLCanvasElement>} />
+
+      <MiniMap dragging={dragging} />
+      <button
+        className={`absolute bottom-14 right-5 z-10 rounded-xl md:bottom-5 ${
+          dragging ? "bg-green-500" : "bg-zinc-300 text-black"
+        } p-3 text-lg text-white`}
+        onClick={() => setDragging((prev) => !prev)}
+      >
+        <BsArrowsMove />
+      </button>
     </div>
   );
 };
