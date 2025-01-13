@@ -1,56 +1,85 @@
+import { RgbaColor } from "react-colorful";
+
 export declare global {
-  interface CtxOptions {
+  type Shape = "line" | "circle" | "rect" | "image";
+  type CtxMode = "eraser" | "draw" | "select";
+
+  export interface CtxOptions {
     lineWidth: number;
-    lineColor: string;
-    erase: boolean;
+    lineColor: RgbaColor;
+    fillColor: RgbaColor;
+    shape: Shape;
+    mode: CtxMode;
+    selection: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    } | null;
   }
-}
 
-interface Move {
-  path: [number, number][];
-  options: CtxOptions;
-  eraser: boolean;
-}
+  export interface Move {
+    circle: {
+      cX: number;
+      cY: number;
+      radiusX: number;
+      radiusY: number;
+    };
+    rect: {
+      width: number;
+      height: number;
+    };
+    img?: {
+      base64: string;
+    };
+    path: [number, number][];
+    options: CtxOptions;
+    timestamp: number;
+    id: string;
+  }
 
-type Room = {
-  usersMoves: Map<string, Move[]>;
-  drawed: Move[];
-  users: Map<string, string>;
-};
+  export type Room = {
+    usersMoves: Map<string, Move[]>;
+    drawed: Move[];
+    users: Map<string, string>;
+  };
 
-interface User {
-  name: string;
-  color: string;
-}
+  export interface User {
+    name: string;
+    color: string;
+  }
 
-interface ClientRoom {
-  id: string;
-  usersMoves: Map<string, Move[]>;
-  movesWithoutUser: Move[];
-  myMoves: Move[];
-  users: Map<string, User>;
-}
+  export interface ClientRoom {
+    id: string;
+    usersMoves: Map<string, Move[]>;
+    movesWithoutUser: Move[];
+    myMoves: Move[];
+    users: Map<string, User>;
+  }
 
-interface ServerToClientEvents {
-  your_move: (move: Move) => void;
-  room_exists: (exists: boolean) => void;
-  room: (room: Room, usersMovesToParse: string, usersToParse: string) => void;
-  created: (roomId: string) => void;
-  joined: (roomId: string, failed?: boolean) => void;
-  user_draw: (move: Move, userId: string) => void;
-  user_undo(userId: string): void;
-  mouse_moved: (x: number, y: number, userId: string) => void;
-  new_user: (userId: string, username: string) => void;
-  user_disconnected: (SocketId: string) => void;
-}
+  export interface ServerToClientEvents {
+    room_exists: (exists: boolean) => void;
+    joined: (roomId: string, failed?: boolean) => void;
+    room: (room: Room, usersMovesToParse: string, usersToParse: string) => void;
+    created: (roomId: string) => void;
+    your_move: (move: Move) => void;
+    user_draw: (move: Move, userId: string) => void;
+    user_undo(userId: string): void;
+    mouse_moved: (x: number, y: number, userId: string) => void;
+    new_user: (userId: string, username: string) => void;
+    user_disconnected: (userId: string) => void;
+    new_msg: (userId: string, msg: string) => void;
+  }
 
-interface ClientToServerEvents {
-  check_room: (roomId: string) => void;
-  draw: (move: Move) => void;
-  mouse_move: (x: number, y: number) => void;
-  undo: () => void;
-  create_room: (username: string) => void;
-  join_room: (room: string, username: string) => void;
-  joined_room: () => void;
-  leave_room: () => void;
+  export interface ClientToServerEvents {
+    check_room: (roomId: string) => void;
+    draw: (move: Move) => void;
+    mouse_move: (x: number, y: number) => void;
+    undo: () => void;
+    create_room: (username: string) => void;
+    join_room: (room: string, username: string) => void;
+    joined_room: () => void;
+    leave_room: () => void;
+    send_msg: (msg: string) => void;
+  }
 }
