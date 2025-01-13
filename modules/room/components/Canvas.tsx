@@ -98,7 +98,7 @@ const Canvas = () => {
         ref={canvasRef}
         width={CANVAS_SIZE.width}
         height={CANVAS_SIZE.height}
-        className={`bg-white ${dragging && "cursor-move"}`}
+        className={`bg-zinc-100 ${dragging && "cursor-move"}`}
         style={{ x, y }}
         drag={dragging}
         dragConstraints={{
