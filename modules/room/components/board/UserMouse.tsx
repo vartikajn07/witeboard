@@ -2,7 +2,7 @@
 //component
 
 import { useEffect, useState } from "react";
-import { useBoardPosition } from "../hooks/useBoardPosition";
+import { useBoardPosition } from "../../hooks/useBoardPosition";
 import { socket } from "@/common/lib/socket";
 import { motion } from "framer-motion";
 import { BsCursorFill } from "react-icons/bs";
