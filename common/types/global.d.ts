@@ -16,6 +16,11 @@ type Room = {
   users: Map<string, string>;
 };
 
+interface User {
+  name: string;
+  color: string;
+}
+
 interface ClientRoom {
   id: string;
   usersMoves: Map<string, Move[]>;
