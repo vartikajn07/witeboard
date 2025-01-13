@@ -1,50 +1,92 @@
-export const drawFromSocket = (
-  socketMoves: [number, number][],
-  socketOptions: CtxOptions,
-  ctx: CanvasRenderingContext2D,
-  afterDraw: () => void
+const getWidthAndHeight = (
+  x: number,
+  y: number,
+  from: [number, number],
+  shift?: boolean
 ) => {
-  const tempCtx = ctx;
+  let width = x - from[0];
+  let height = y - from[1];
 
-  if (tempCtx) {
-    tempCtx.lineWidth = socketOptions.lineWidth;
-    tempCtx.strokeStyle = socketOptions.lineColor;
-
-    tempCtx.beginPath();
-    socketMoves.forEach(([x, y]) => {
-      tempCtx.lineTo(x, y);
-    });
-    tempCtx.stroke();
-    tempCtx.closePath();
-    afterDraw();
+  if (shift) {
+    if (Math.abs(width) > Math.abs(height)) {
+      if ((width > 0 && height < 0) || (width < 0 && height > 0))
+        width = -height;
+      else width = height;
+    } else if ((height > 0 && width < 0) || (height < 0 && width > 0))
+      height = -width;
+    else height = width;
+  } else {
+    width = x - from[0];
+    height = y - from[1];
   }
+
+  return { width, height };
 };
 
-//draw on undo function
-export const drawOnUndo = (
+export const drawCircle = (
   ctx: CanvasRenderingContext2D,
-  savedMoves: [number, number][][],
-  users: { [key: string]: [number, number][][] }
+  from: [number, number],
+  x: number,
+  y: number,
+  shift?: boolean
 ) => {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.beginPath();
 
-  Object.values(users).forEach((user) => {
-    user.forEach((userMove) => {
-      ctx.beginPath();
-      userMove.forEach(([x, y]) => {
-        ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-      ctx.closePath();
-    });
-  });
+  const { width, height } = getWidthAndHeight(x, y, from, shift);
 
-  savedMoves.forEach((movesArr) => {
+  const cX = from[0] + width / 2;
+  const cY = from[1] + height / 2;
+  const radiusX = Math.abs(width / 2);
+  const radiusY = Math.abs(height / 2);
+
+  ctx.ellipse(cX, cY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+
+  ctx.stroke();
+  ctx.fill();
+  ctx.closePath();
+
+  return { cX, cY, radiusX, radiusY };
+};
+
+export const drawRect = (
+  ctx: CanvasRenderingContext2D,
+  from: [number, number],
+  x: number,
+  y: number,
+  shift?: boolean,
+  fill?: boolean
+) => {
+  ctx.beginPath();
+
+  const { width, height } = getWidthAndHeight(x, y, from, shift);
+
+  if (fill) ctx.fillRect(from[0], from[1], width, height);
+  else ctx.rect(from[0], from[1], width, height);
+
+  ctx.stroke();
+  ctx.fill();
+  ctx.closePath();
+
+  return { width, height };
+};
+
+export const drawLine = (
+  ctx: CanvasRenderingContext2D,
+  from: [number, number],
+  x: number,
+  y: number,
+  shift?: boolean
+) => {
+  if (shift) {
     ctx.beginPath();
-    movesArr.forEach(([x, y]) => {
-      ctx.lineTo(x, y);
-    });
+    ctx.lineTo(from[0], from[1]);
+    ctx.lineTo(x, y);
     ctx.stroke();
     ctx.closePath();
-  });
+
+    return;
+  }
+
+  ctx.lineTo(x, y);
+  ctx.stroke();
 };
