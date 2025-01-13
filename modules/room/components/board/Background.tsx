@@ -1,9 +1,9 @@
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject, useEffect } from "react";
 
 import { motion } from "framer-motion";
 
 import { CANVAS_SIZE } from "@/common/constants/canvasSize";
-import { useBackground } from "../../../../common/recoil/background";
+import { useBackground } from "@/common/recoil/background";
 
 import { useBoardPosition } from "../../hooks/useBoardPosition";
 
@@ -11,10 +11,8 @@ const Background = ({ bgRef }: { bgRef: RefObject<HTMLCanvasElement> }) => {
   const bg = useBackground();
   const { x, y } = useBoardPosition();
 
-  const ref = useRef<HTMLCanvasElement>(null);
-
   useEffect(() => {
-    const ctx = bgRef.current?.getContext("2d");
+    const ctx = bgRef?.current?.getContext("2d");
 
     if (ctx) {
       ctx.fillStyle = bg.mode === "dark" ? "#222" : "#fff";
