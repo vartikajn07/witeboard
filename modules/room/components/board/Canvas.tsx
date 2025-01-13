@@ -5,12 +5,12 @@ import { canvas } from "framer-motion/dist/client";
 import { useEffect, useRef, useState } from "react";
 import { useKeyPressEvent } from "react-use";
 import { socket } from "@/common/lib/socket";
-import MiniMap from "./Minimap";
-import { useBoardPosition } from "../hooks/useBoardPosition";
+import MiniMap from "../Minimap";
+import { useBoardPosition } from "../../hooks/useBoardPosition";
 import { useRoom } from "@/common/recoil/room";
-import { drawAllMoves } from "../helpers/Canvas.helpers";
-import { useDraw } from "../hooks/useDraw";
-import { useSocketDraw } from "../hooks/useSocketDraw";
+import { drawAllMoves } from "../../helpers/Canvas.helpers";
+import { useDraw } from "../../hooks/useDraw";
+import { useSocketDraw } from "../../hooks/useSocketDraw";
 
 const Canvas = () => {
   const room = useRoom();
