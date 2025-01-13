@@ -1,4 +1,4 @@
-// import { useRoom } from "@/common/recoil/room";
+import { useRoomId } from "@/common/recoil/room";
 
 import RoomContextProvider from "../context/Room.context";
 import Canvas from "./Canvas";
@@ -7,7 +7,9 @@ import { MouseRenderer } from "./MouseRenderer";
 import { ToolBar } from "./ToolBar";
 
 const Room = () => {
-  //   const room = useRoom();
+  const roomId = useRoomId();
+
+  if (!roomId) return <div>No room</div>;
 
   return (
     <RoomContextProvider>
