@@ -20,20 +20,6 @@ const ModePicker = () => {
     <>
       <button
         className={`btn-icon text-xl ${
-          options.mode === "draw" && "bg-green-400"
-        }`}
-        onClick={() => {
-          setOptions((prev) => ({
-            ...prev,
-            mode: "draw",
-          }));
-        }}
-      >
-        <BsPencilFill />
-      </button>
-
-      <button
-        className={`btn-icon text-xl ${
           options.mode === "eraser" && "bg-green-400"
         }`}
         onClick={() => {
@@ -46,7 +32,7 @@ const ModePicker = () => {
         <FaEraser />
       </button>
 
-      <button
+      {/* <button
         className={`btn-icon text-2xl ${
           options.mode === "select" && "bg-green-400"
         }`}
@@ -58,7 +44,7 @@ const ModePicker = () => {
         }}
       >
         <AiOutlineSelect />
-      </button>
+      </button> */}
     </>
   );
 };
