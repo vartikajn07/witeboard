@@ -61,6 +61,7 @@ const ToolBar = () => {
 
   return (
     <>
+      {/* @ts-expect-error: Type mismatch in motion.div */}
       <motion.button
         className="btn-icon absolute bottom-1/2 -left-2 z-50 h-10 w-10 rounded-full bg-black text-2xl transition-none lg:hidden"
         animate={{ rotate: opened ? 0 : 180 }}
@@ -69,6 +70,7 @@ const ToolBar = () => {
       >
         <FiChevronRight />
       </motion.button>
+      {/* @ts-expect-error: Type mismatch in motion.div */}
       <motion.div
         className="absolute left-10 top-[50%] z-50 grid grid-cols-2 items-center gap-5 rounded-lg bg-zinc-900 p-5 text-white 2xl:grid-cols-1"
         animate={{

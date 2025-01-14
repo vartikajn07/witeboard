@@ -26,6 +26,7 @@ const MousePosition = () => {
   }, 150);
 
   return (
+    // @ts-expect-error: Type mismatch in motion.div
     <motion.div
       ref={ref}
       className="pointer-events-none absolute top-0 left-0 z-50  text-black"

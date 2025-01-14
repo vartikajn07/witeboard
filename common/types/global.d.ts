@@ -16,6 +16,7 @@ export declare global {
       width: number;
       height: number;
     } | null;
+    erase?: boolean;
   }
 
   export interface Move {

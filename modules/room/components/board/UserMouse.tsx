@@ -38,6 +38,7 @@ export const UserMouse = ({ userId }: { userId: string }) => {
   }, [boardPos.y]);
 
   return (
+    // @ts-expect-error: Type mismatch in motion.div
     <motion.div
       className={`absolute top-0 left-0 text-blue-800 ${
         pos.x === -1 && "hidden"

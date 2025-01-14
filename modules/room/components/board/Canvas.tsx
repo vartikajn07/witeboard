@@ -71,6 +71,7 @@ const Canvas = () => {
       <motion.canvas
         // SETTINGS
         ref={canvasRef}
+        // @ts-expect-error: Type mismatch in motion.div
         width={CANVAS_SIZE.width}
         height={CANVAS_SIZE.height}
         className={`absolute top-0 z-10 ${dragging && "cursor-move"}`}

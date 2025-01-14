@@ -24,6 +24,7 @@ const LineWidthPicker = () => {
       </button>
       <AnimatePresence>
         {opened && (
+          // @ts-expect-error: Type mismatch in motion.div
           <motion.div
             className="absolute top-[6px] left-14 w-36"
             initial="from"

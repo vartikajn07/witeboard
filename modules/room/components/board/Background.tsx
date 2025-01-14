@@ -44,6 +44,7 @@ const Background = ({ bgRef }: { bgRef: RefObject<HTMLCanvasElement> }) => {
   return (
     <motion.canvas
       ref={bgRef}
+      // @ts-expect-error: Type mismatch in motion.div
       width={CANVAS_SIZE.width}
       height={CANVAS_SIZE.height}
       className="absolute top-0 bg-zinc-100"

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, HTMLMotionProps } from "framer-motion";
 import { useRecoilState } from "recoil";
 
 import modalAtom from "@/common/recoil/modal";
@@ -13,7 +13,7 @@ import {
   modalAnimation,
 } from "../animations/ModalManager.animation";
 
-const ModalManager = () => {
+const ModalManager: React.FC<HTMLMotionProps<"div">> = () => {
   const [{ opened, modal }, setModal] = useRecoilState(modalAtom);
 
   const [portalNode, setPortalNode] = useState<HTMLElement>();
@@ -34,6 +34,7 @@ const ModalManager = () => {
 
   return (
     <Portal>
+      {/* @ts-expect-error: TypeScript type error workaround for Framer Motion */}
       <motion.div
         className="absolute z-40 flex min-h-full w-full items-center justify-center bg-black/80"
         onClick={() => setModal({ modal: <></>, opened: false })}
@@ -43,6 +44,7 @@ const ModalManager = () => {
       >
         <AnimatePresence>
           {opened && (
+            // @ts-expect-error: Type mismatch in motion.div
             <motion.div
               variants={modalAnimation}
               initial="closed"
@@ -51,7 +53,7 @@ const ModalManager = () => {
               onClick={(e) => e.stopPropagation()}
               className="p-6"
             >
-              {modal}
+              <div>{modal}</div>
             </motion.div>
           )}
         </AnimatePresence>

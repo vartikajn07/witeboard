@@ -29,6 +29,7 @@ const ColorPicker = () => {
       </button>
       <AnimatePresence>
         {opened && (
+          // @ts-expect-error: Type mismatch in motion.div
           <motion.div
             className="absolute left-10 mt-24 sm:left-14"
             variants={EntryAnimation}

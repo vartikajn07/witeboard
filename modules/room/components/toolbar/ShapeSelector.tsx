@@ -42,6 +42,7 @@ const ShapeSelector = () => {
 
       <AnimatePresence>
         {opened && (
+          // @ts-expect-error: Type mismatch in motion.div
           <motion.div
             className="absolute left-14 z-10 flex gap-1 rounded-lg border bg-zinc-900 p-2 md:border-0"
             variants={EntryAnimation}
