@@ -1,4 +1,4 @@
-### Witeboard
+## Witeboard
 
 This is a web-based whiteboard application with the following features:
 
@@ -38,6 +38,9 @@ bun dev
 ```bash
 npm install --legacy-peer-deps
 ```
-This application is deployed on Render:
+## Deployment:
+This application is deployed on Render
+
 Check here: [https://witeboard.onrender.com/](https://witeboard.onrender.com/)
+
 Note- Render requires payment credentials after inactivity and has put some restrictions on the whiteboard application.
